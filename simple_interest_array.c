@@ -14,7 +14,7 @@ typedef struct _ProgramData {
     } inputs;
     struct {
         float interest[MAX_DATA];
-        float amount[MAX_DATA];  // Corrected spelling from 'ammount'
+        float amount[MAX_DATA];
     } outputs;
 } ProgramData;
 
