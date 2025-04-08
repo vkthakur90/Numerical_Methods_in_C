@@ -13,7 +13,7 @@ typedef struct _ProgramData {
     } inputs;
     struct {
         float interest[MAX_DATA];
-        float amount[MAX_DATA];  // Corrected spelling from 'ammount'
+        float amount[MAX_DATA]; 
     } outputs;
 } ProgramData;
 
@@ -61,34 +61,17 @@ void ProgramData_readInputsFromFile(struct _ProgramData * restrict data_ptr) {
     fclose(file);
 }
 
-void ProgramData_computeInterest(struct _ProgramData * restrict data_ptr){
-    for (size_t idx = 0; idx < data_ptr->size; ++idx)
-        data_ptr->outputs.interest[idx] = 1;
-    
-    for (size_t idx = 0; idx < data_ptr->size; ++idx)
-        data_ptr->outputs.interest[idx] *= data_ptr->inputs.principal[idx];
-    
-    for (size_t idx = 0; idx < data_ptr->size; ++idx)
-        data_ptr->outputs.interest[idx] *= data_ptr->inputs.rate[idx] / 100.0;
-    
-    for (size_t idx = 0; idx < data_ptr->size; ++idx)
-        data_ptr->outputs.interest[idx] *= data_ptr->inputs.time[idx];
-}
-
-void ProgramData_computeAmmount(struct _ProgramData * restrict data_ptr){
-    for (size_t idx = 0; idx < data_ptr->size; ++idx)
-        data_ptr->outputs.amount[idx] = 0;
-    
-    for (size_t idx = 0; idx < data_ptr->size; ++idx)
-        data_ptr->outputs.amount[idx] += data_ptr->inputs.principal[idx];
-    
-    for (size_t idx = 0; idx < data_ptr->size; ++idx)
-        data_ptr->outputs.amount[idx] += data_ptr->outputs.interest[idx];
-}
-
 void ProgramData_compute(struct _ProgramData * restrict data_ptr){
-    ProgramData_computeInterest(data_ptr);
-    ProgramData_computeAmmount(data_ptr);
+    for (size_t idx = 0; idx < data_ptr->size; ++idx){
+        data_ptr->outputs.interest[idx] = 1;
+        data_ptr->outputs.interest[idx] *= data_ptr->inputs.principal[idx];
+        data_ptr->outputs.interest[idx] *= data_ptr->inputs.rate[idx] / 100.0;
+        data_ptr->outputs.interest[idx] *= data_ptr->inputs.time[idx];
+        
+        data_ptr->outputs.amount[idx] = 0;
+        data_ptr->outputs.amount[idx] += data_ptr->inputs.principal[idx];
+        data_ptr->outputs.amount[idx] += data_ptr->outputs.interest[idx];
+    }
 }
 
 void ProgramData_displayResults(struct _ProgramData * restrict data_ptr){
@@ -107,6 +90,11 @@ void ProgramData_displayResults(struct _ProgramData * restrict data_ptr){
 }
 
 int main(int argc, char** argv) {
+    if (argc != 2) {
+        fprintf(stderr, "Usage: %s <input_filename>\n", argv[0]);
+        exit(EXIT_FAILURE);
+    }
+
     ProgramData data;
     data.filename = argv[1];
     
@@ -116,3 +104,4 @@ int main(int argc, char** argv) {
     
     return 0;
 }
+
